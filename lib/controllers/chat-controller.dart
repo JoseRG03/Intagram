@@ -5,6 +5,12 @@ class ChatController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// Get the current user's ID
+  Future<String?> getCurrentUserId() async {
+    final user = _auth.currentUser;
+    return user?.uid;
+  }
+
   /// Get all users except the current user
   Future<List<Map<String, dynamic>>> getAllUsers() async {
     final currentUser = _auth.currentUser;
@@ -12,8 +18,9 @@ class ChatController {
 
     final querySnapshot = await _firestore
         .collection('users')
-        .where('id', isNotEqualTo: currentUser.uid)
+        .where('email', isNotEqualTo: currentUser.email)
         .get();
+
 
     return querySnapshot.docs.map((doc) {
       final data = doc.data();
